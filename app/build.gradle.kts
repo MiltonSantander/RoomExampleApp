@@ -43,16 +43,16 @@ dependencies {
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleVersion")
-    // ViewModel utilities for Compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifeCycleVersion")
     // LiveData
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifeCycleVersion")
     // Annotation processor
-    kapt("androidx.lifecycle:lifecycle-compiler:$lifeCycleVersion")
+    implementation ("androidx.lifecycle:lifecycle-common-java8:$lifeCycleVersion")
     //room
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    ////coroutines
+    //optional - Kotlin extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$roomVersion")
+    //coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1-Beta")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1-Beta")
 
