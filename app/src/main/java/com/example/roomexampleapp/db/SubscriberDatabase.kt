@@ -13,15 +13,18 @@ abstract class SubscriberDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: SubscriberDatabase? = null
         fun getInstance(context: Context): SubscriberDatabase {
-            var instance = INSTANCE
-            if (instance == null) {
-                instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    SubscriberDatabase::class.java,
-                    "subscriber_data_database"
-                ).build()
+            synchronized(this) {
+                var instance = INSTANCE
+                if (instance == null) {
+                    instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        SubscriberDatabase::class.java,
+                        "subscriber_data_database"
+                    ).build()
+                    INSTANCE = instance
+                }
+                return instance
             }
-            return instance
         }
     }
 }
