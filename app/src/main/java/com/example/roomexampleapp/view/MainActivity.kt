@@ -2,9 +2,12 @@ package com.example.roomexampleapp.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.roomexampleapp.R
+import com.example.roomexampleapp.SubscriberAdapter
 import com.example.roomexampleapp.SubscriberViewModel
 import com.example.roomexampleapp.SubscriberViewModelFactory
 import com.example.roomexampleapp.databinding.ActivityMainBinding
@@ -28,5 +31,13 @@ class MainActivity : AppCompatActivity() {
         )[SubscriberViewModel::class.java]
         binding.subscriberViewModel = subscriberViewModel
         binding.lifecycleOwner = this
+        setUpRecyclerView()
+    }
+
+    private fun setUpRecyclerView() {
+        binding.subscriberRecyclerview.layoutManager = LinearLayoutManager(this)
+        subscriberViewModel.subscriber.observe(this) {
+            binding.subscriberRecyclerview.adapter = SubscriberAdapter(it)
+        }
     }
 }
