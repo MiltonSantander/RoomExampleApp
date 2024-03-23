@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.roomexampleapp.databinding.ListItemBinding
 import com.example.roomexampleapp.db.Subscriber
 
-class SubscriberAdapter(private val subscriberList: List<Subscriber>) :
+class SubscriberAdapter(
+    private val subscriberList: List<Subscriber>,
+    private val callback: (Subscriber) -> Unit
+) :
     RecyclerView.Adapter<SubscriberAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ListItemBinding) :
@@ -16,6 +19,7 @@ class SubscriberAdapter(private val subscriberList: List<Subscriber>) :
         fun bind(subscriber: Subscriber) {
             binding.subscriberName.text = subscriber.name
             binding.subscriberEmail.text = subscriber.email
+            binding.cardView.setOnClickListener { callback(subscriber) }
         }
     }
 

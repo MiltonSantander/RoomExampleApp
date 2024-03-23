@@ -7,6 +7,7 @@ import com.example.roomexampleapp.db.Subscriber
 import com.example.roomexampleapp.db.SubscriberRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SubscriberViewModel(private val subscriberRepository: SubscriberRepository) : ViewModel() {
     val subscriber = subscriberRepository.subscriber
@@ -14,6 +15,8 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
     val inputEmail = MutableLiveData<String>()
     val saveOrUpdateButtonText = MutableLiveData<String>()
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
+    private var itemHasBeenSelected = false
+    private lateinit var selectedSubscriber: Subscriber
 
     init {
         saveOrUpdateButtonText.value = "Save"
@@ -21,42 +24,74 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
     }
 
     fun saveOrUpdate() {
-        insert(
-            Subscriber(
-                0,
-                inputName.value.toString(),
-                inputEmail.value.toString()
+        if (itemHasBeenSelected) {
+            selectedSubscriber.name = inputName.value.toString()
+            selectedSubscriber.email = inputEmail.value.toString()
+            update(selectedSubscriber)
+        } else {
+            insert(
+                Subscriber(
+                    0,
+                    inputName.value.toString(),
+                    inputEmail.value.toString()
+                )
             )
-        )
-        inputName.value = ""
-        inputEmail.value = ""
+            inputName.value = ""
+            inputEmail.value = ""
+        }
     }
 
     fun clearAllOrDelete() {
-        clearAll()
+        if (itemHasBeenSelected) {
+            delete(selectedSubscriber)
+        } else {
+            clearAll()
+        }
     }
 
-    fun insert(subscriber: Subscriber) {
+    private fun insert(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.insert(subscriber)
         }
     }
 
-    fun update(subscriber: Subscriber) {
+    private fun update(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.update(subscriber)
+            setComponentsToStartValue()
         }
     }
 
-    fun delete(subscriber: Subscriber) {
+    private fun delete(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.delete(subscriber)
+            setComponentsToStartValue()
         }
     }
 
-    fun clearAll() {
+    private fun clearAll() {
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.deleteAll()
+        }
+    }
+
+    fun selectedItem(subscriber: Subscriber) {
+        inputEmail.value = subscriber.email
+        inputName.value = subscriber.name
+        saveOrUpdateButtonText.value = "update"
+        clearAllOrDeleteButtonText.value = "delete"
+        itemHasBeenSelected = true
+        selectedSubscriber = subscriber
+
+    }
+
+    private suspend fun setComponentsToStartValue() {
+        withContext(Dispatchers.Main) {
+            inputEmail.value = ""
+            inputName.value = ""
+            saveOrUpdateButtonText.value = "save"
+            clearAllOrDeleteButtonText.value = "clear all"
+            itemHasBeenSelected = false
         }
     }
 }
