@@ -55,32 +55,48 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
 
     private fun insert(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
-            subscriberRepository.insert(subscriber)
+            val newSubscriberId = subscriberRepository.insert(subscriber)
             withContext(Dispatchers.Main) {
-                setStatusMessage("Subscriber Inserted Successfully")
+                if (newSubscriberId > -1) {
+                    setStatusMessage("Subscriber Inserted Successfully")
+                } else {
+                    setStatusMessage("Error Occurred")
+                }
             }
         }
     }
 
     private fun update(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
-            subscriberRepository.update(subscriber)
-            setComponentsToStartValue("Subscriber Updated Successfully")
+            val numberOfRows = subscriberRepository.update(subscriber)
+            if (numberOfRows > 0) {
+                setComponentsToStartValue("Subscriber Updated Successfully")
+            } else {
+                setComponentsToStartValue("Error Occurred")
+            }
         }
     }
 
     private fun delete(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
-            subscriberRepository.delete(subscriber)
-            setComponentsToStartValue("Subscriber Deleted Successfully")
+            val numberOfRowsDeleted = subscriberRepository.delete(subscriber)
+            if (numberOfRowsDeleted > 0) {
+                setComponentsToStartValue("Subscriber Deleted Successfully")
+            } else {
+                setComponentsToStartValue("Error Occurred")
+            }
         }
     }
 
     private fun clearAll() {
         viewModelScope.launch(Dispatchers.IO) {
-            subscriberRepository.deleteAll()
+            val numberOfRowsDeleted = subscriberRepository.deleteAll()
             withContext(Dispatchers.Main) {
-                setStatusMessage("All Subscribers Deleted Successfully")
+                if (numberOfRowsDeleted > 0) {
+                    setStatusMessage("All Subscribers Deleted Successfully")
+                } else {
+                    setStatusMessage("Error Occurred")
+                }
             }
         }
     }
