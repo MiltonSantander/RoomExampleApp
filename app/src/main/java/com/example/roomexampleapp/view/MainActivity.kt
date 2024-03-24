@@ -31,13 +31,15 @@ class MainActivity : AppCompatActivity() {
         binding.subscriberViewModel = subscriberViewModel
         binding.lifecycleOwner = this
         setUpRecyclerView()
+        subscriberViewModel.message.observe(this) {
+            Toast.makeText(this, it.getContentIfNotHandled(), Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun setUpRecyclerView() {
         binding.subscriberRecyclerview.layoutManager = LinearLayoutManager(this)
         subscriberViewModel.subscriber.observe(this) {
             binding.subscriberRecyclerview.adapter = SubscriberAdapter(it) { subscriber ->
-                Toast.makeText(this, "$subscriber", Toast.LENGTH_LONG).show()
                 subscriberViewModel.selectedItem(subscriber)
             }
         }

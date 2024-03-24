@@ -1,5 +1,6 @@
 package com.example.roomexampleapp
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,9 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
     private var itemHasBeenSelected = false
     private lateinit var selectedSubscriber: Subscriber
+    private val statusMessage = MutableLiveData<Event<String>>()
+    val message: LiveData<Event<String>>
+        get() = statusMessage
 
     init {
         saveOrUpdateButtonText.value = "Save"
@@ -52,26 +56,32 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
     private fun insert(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.insert(subscriber)
+            withContext(Dispatchers.Main) {
+                setStatusMessage("Subscriber Inserted Successfully")
+            }
         }
     }
 
     private fun update(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.update(subscriber)
-            setComponentsToStartValue()
+            setComponentsToStartValue("Subscriber Updated Successfully")
         }
     }
 
     private fun delete(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.delete(subscriber)
-            setComponentsToStartValue()
+            setComponentsToStartValue("Subscriber Deleted Successfully")
         }
     }
 
     private fun clearAll() {
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.deleteAll()
+            withContext(Dispatchers.Main) {
+                setStatusMessage("All Subscribers Deleted Successfully")
+            }
         }
     }
 
@@ -85,13 +95,18 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
 
     }
 
-    private suspend fun setComponentsToStartValue() {
+    private suspend fun setComponentsToStartValue(statusMessageString: String) {
         withContext(Dispatchers.Main) {
             inputEmail.value = ""
             inputName.value = ""
             saveOrUpdateButtonText.value = "save"
             clearAllOrDeleteButtonText.value = "clear all"
             itemHasBeenSelected = false
+            setStatusMessage(statusMessageString)
         }
+    }
+
+    private fun setStatusMessage(statusMessageString: String) {
+        statusMessage.value = Event(statusMessageString)
     }
 }
