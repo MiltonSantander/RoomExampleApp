@@ -30,18 +30,17 @@ class MainActivity : AppCompatActivity() {
         )[SubscriberViewModel::class.java]
         binding.subscriberViewModel = subscriberViewModel
         binding.lifecycleOwner = this
-        setUpRecyclerView()
+        binding.subscriberRecyclerview.layoutManager = LinearLayoutManager(this)
+        val subscriberAdapter = SubscriberAdapter { subscriber ->
+            subscriberViewModel.selectedItem(subscriber)
+        }
+        binding.subscriberRecyclerview.adapter = subscriberAdapter
+        subscriberViewModel.subscribers.observe(this) {
+            subscriberAdapter.setSubscriberList(it)
+            subscriberAdapter.notifyDataSetChanged()
+        }
         subscriberViewModel.message.observe(this) {
             Toast.makeText(this, it.getContentIfNotHandled(), Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun setUpRecyclerView() {
-        binding.subscriberRecyclerview.layoutManager = LinearLayoutManager(this)
-        subscriberViewModel.subscriber.observe(this) {
-            binding.subscriberRecyclerview.adapter = SubscriberAdapter(it) { subscriber ->
-                subscriberViewModel.selectedItem(subscriber)
-            }
         }
     }
 }

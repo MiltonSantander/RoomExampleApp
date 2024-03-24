@@ -9,10 +9,14 @@ import com.example.roomexampleapp.databinding.ListItemBinding
 import com.example.roomexampleapp.db.Subscriber
 
 class SubscriberAdapter(
-    private val subscriberList: List<Subscriber>,
     private val callback: (Subscriber) -> Unit
-) :
-    RecyclerView.Adapter<SubscriberAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<SubscriberAdapter.ViewHolder>() {
+    private val subscriberList = ArrayList<Subscriber>()
+
+    fun setSubscriberList(subscribers: List<Subscriber>) {
+        subscriberList.clear()
+        subscriberList.addAll(subscribers)
+    }
 
     inner class ViewHolder(private val binding: ListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {

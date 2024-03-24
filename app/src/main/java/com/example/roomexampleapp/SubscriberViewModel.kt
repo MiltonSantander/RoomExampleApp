@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SubscriberViewModel(private val subscriberRepository: SubscriberRepository) : ViewModel() {
-    val subscriber = subscriberRepository.subscriber
+    val subscribers = subscriberRepository.subscribers
     val inputName = MutableLiveData<String>()
     val inputEmail = MutableLiveData<String>()
     val saveOrUpdateButtonText = MutableLiveData<String>()

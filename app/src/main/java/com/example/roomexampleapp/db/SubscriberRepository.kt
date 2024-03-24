@@ -1,7 +1,7 @@
 package com.example.roomexampleapp.db
 
 class SubscriberRepository(private val dao: SubscriberDAO) {
-    val subscriber = dao.getAllSubscriber()
+    val subscribers = dao.getAllSubscriber()
 
     suspend fun insert(subscriber: Subscriber): Long {
         return dao.insertSubscriber(subscriber)
